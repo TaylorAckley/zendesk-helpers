@@ -3,7 +3,8 @@ bower_components
 vault
 token.txt
 
-*.json
+!package.json
+!settings.json
 .env
 *data.json
 
