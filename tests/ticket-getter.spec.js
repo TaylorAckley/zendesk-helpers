@@ -69,10 +69,58 @@ describe('TicketGetter', () => {
             });
             tg.populate()
                 .then((res) => {
-                    //console.log(res);
                     should.exist(res);
                     res.status.should.equal('OK');
                     should.exist(res.payload);
+                    done();
+                });
+        }).timeout(30000);
+    });
+
+    describe('Should use search endpoint if query is present.', (done) => {
+        it('Should have a response', (done) => {
+            let tg = new TicketGetter({
+                forceResponse: true,
+                query: 'type:ticket tags:priority-normal',
+
+            });
+            tg.populate()
+                .then((res) => {
+                    should.exist(res);
+                    res.status.should.equal('OK');
+                    should.exist(res.payload.data[0].id);
+                    done();
+                });
+        }).timeout(30000);
+
+        it('Should error if both a query and sideload are present.', (done) => {
+            let tg = new TicketGetter({
+                forceResponse: true,
+                query: 'type:ticket tags:priority-normal',
+                sideloads: 'comment_count'
+
+            });
+            tg.populate()
+                .catch((err) => {
+                    should.exist(err);
+                    err.should.equal('Error: Sideloads are unavailable when paired with a query.  If you are including a query, you cannot include a sideload.');
+                    done();
+                });
+        }).timeout(30000);
+    });
+
+
+    describe('Should sideload ticket metrics.', (done) => {
+        it('Should output a file', (done) => {
+            let tg = new TicketGetter({
+                sideloads: 'comment_count',
+                forceResponse: true
+            });
+            tg.populate()
+                .then((res) => {
+                    should.exist(res);
+                    res.status.should.equal('OK');
+                    should.exist(res.payload.data[0].comment_count);
                     done();
                 });
         }).timeout(30000);
