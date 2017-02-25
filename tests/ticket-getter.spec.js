@@ -53,9 +53,7 @@ describe('TicketGetter', () => {
                 })
                 .then((res) => {
                     fs.readFile(file, 'utf-8', (err, data) => {
-                        data = JSON.parse(data);
-                        should.exist(data.data);
-                        should.exist(data.metadata.timestamp);
+                        should.exist(data);
                         done();
                     });
                 })
